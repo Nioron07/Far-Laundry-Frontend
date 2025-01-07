@@ -61,9 +61,9 @@
     class="timeline" v-show="schedule.length != 0">
     <v-timeline-item v-for="(date, i) in schedule" size="x-small">
       <v-card :class="i % 2 != 0 ? 'evenDate' : 'oddDate'">
-        <v-card-title class="bg-deep-purple-accent-3">{{ date.time.slice(0, 15) }}</v-card-title>
+        <v-card-title class=" bg-deep-purple-accent-3">{{ date.time.slice(4, 16)}}</v-card-title>
         <v-card-text class="pa-2">
-          <p>{{ `Optimum Time: ${date.bestTime}` }}</p>
+          <p>{{ `Best Time:\n ${date.bestTime}` }}</p>
         </v-card-text>
       </v-card>
     </v-timeline-item>
@@ -114,7 +114,8 @@ export default {
       }
       this.invalidDates = false;
       const increment = this.numFreq * this.frequency;
-      await (await fetch(`http://127.0.0.1:5000/optimumTime/${this.toggle}/startDayOfMonth/${this.startDate.getDate()}/startMonth/${this.startDate.getMonth() + 1}/endDayOfMonth/${this.endDate.getDate()}/endMonth/${this.endDate.getMonth() + 1}/step/${increment}`)).json().then(
+      console.log(this.startDate.toDateString())
+      await (await fetch(`http://127.0.0.1:5000/optimumTime/${this.toggle}/startDay/${this.startDate.getTime()}/endDay/${this.endDate.getTime()}/step/${increment}`)).json().then(
         (data) => {
           
           console.log(this.schedule)
