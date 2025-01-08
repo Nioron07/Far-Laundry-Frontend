@@ -38,7 +38,7 @@ const halls = { 'Oglesby': 0, 'Trelease': 1 }
 function PostToDatabase() {
   if (hall.value != null && washerNum.value != null && dryerNum.value != null) {
     var today = new Date()
-    fetch("http://127.0.0.1:5000/contribute", {
+    fetch("https://backend-1047148175119.us-central1.run.app/contribute", {
       method: "POST",
       body: JSON.stringify({
         data: [washerNum.value, dryerNum.value, halls[hall.value], today.getMonth(), today.getDay(), today.getHours()]

@@ -49,7 +49,7 @@ function changeHall(value) {
     getPrediction()
 }
 async function getPrediction() {
-    const output = await (await fetch(`http://127.0.0.1:5000/current/${hallsDict[hall.value]}`)).json().then(
+    const output = await (await fetch(`https://backend-1047148175119.us-central1.run.app/current/${hallsDict[hall.value]}`)).json().then(
         (data) => {
             dryerPred.value = data['Dryers']
             washerPred.value = data['Washing Machines']

@@ -242,7 +242,7 @@ async function updateDaySeriesData(hall) {
     if (currentDay != window.localStorage.getItem("currentDay")) {
         dayDryerData.value = []
         dayWasherData.value = []
-        await (await fetch(`http://127.0.0.1:5000/today/0`)).json().then(
+        await (await fetch(`https://backend-1047148175119.us-central1.run.app/today/0`)).json().then(
             (data) => {
                 window.localStorage.setItem("dayWasherDataOg", Object.values(data['Washing Machines']['Predictions']).toString())
                 window.localStorage.setItem("dayDryerDataOg", Object.values(data['Dryers']['Predictions']).toString())
@@ -252,7 +252,7 @@ async function updateDaySeriesData(hall) {
                 window.localStorage.setItem("dayDryLowOg", data['Dryers']["Low"])
             }
         )
-        await (await fetch(`http://127.0.0.1:5000/today/1`)).json().then(
+        await (await fetch(`https://backend-1047148175119.us-central1.run.app/today/1`)).json().then(
             (data) => {
                 window.localStorage.setItem("dayWasherDataTr", Object.values(data['Washing Machines']['Predictions']).toString())
                 window.localStorage.setItem("dayDryerDataTr", Object.values(data['Dryers']['Predictions']).toString())
@@ -262,7 +262,7 @@ async function updateDaySeriesData(hall) {
                 window.localStorage.setItem("dayDryLowTr", data['Dryers']["Low"])
             }
         )
-        await (await fetch(`http://127.0.0.1:5000/currentTime`)).json().then(
+        await (await fetch(`https://backend-1047148175119.us-central1.run.app/currentTime`)).json().then(
             (data) => {
                 window.localStorage.setItem("currentTime", data["Time"])
             }
@@ -273,7 +273,7 @@ async function updateDaySeriesData(hall) {
         currentHour = 12
     }
     if (currentHour != window.localStorage.getItem("currentTime").split(" ")[1].split(":")[0]) {
-        await (await fetch(`http://127.0.0.1:5000/currentTime`)).json().then(
+        await (await fetch(`https://backend-1047148175119.us-central1.run.app/currentTime`)).json().then(
             (data) => {
                 window.localStorage.setItem("currentTime", data["Time"])
             }
@@ -479,7 +479,7 @@ async function updateWeekSeriesData(hall) {
     if (currentDay != window.localStorage.getItem("currentDay")) {
         weekChartSeries.value[0]['data'] = []
         weekChartSeries.value[1]['data'] = []
-        await (await fetch("http://127.0.0.1:5000/week/0")).json().then(
+        await (await fetch("https://backend-1047148175119.us-central1.run.app/week/0")).json().then(
             (data) => {
                 window.localStorage.setItem("currentDay", new Date().getDate().toString())
                 window.localStorage.setItem("currentTime", data['Current Time'])
@@ -492,7 +492,7 @@ async function updateWeekSeriesData(hall) {
                 window.localStorage.setItem("weekDryLowOg", data['Dryers']["Low"])
             }
         )
-        await (await fetch("http://127.0.0.1:5000/week/1")).json().then(
+        await (await fetch("https://backend-1047148175119.us-central1.run.app/week/1")).json().then(
             (data) => {
                 window.localStorage.setItem("weekWasherDataTr", Object.values(data['Washing Machines']).slice(0, Object.values(data['Washing Machines']).length - 2).toString())
                 window.localStorage.setItem("weekDryerDataTr", Object.values(data['Dryers']).slice(0, Object.values(data['Washing Machines']).length - 2).toString())
@@ -502,7 +502,7 @@ async function updateWeekSeriesData(hall) {
                 window.localStorage.setItem("weekDryLowTr", data['Dryers']["Low"])
             }
         )
-        await (await fetch(`http://127.0.0.1:5000/currentTime`)).json().then(
+        await (await fetch(`https://backend-1047148175119.us-central1.run.app/currentTime`)).json().then(
             (data) => {
                 window.localStorage.setItem("currentTime", data["Time"])
             }
@@ -514,7 +514,7 @@ async function updateWeekSeriesData(hall) {
         currentHour = 12
     }
     if (currentHour != window.localStorage.getItem("currentTime").split(" ")[1].split(":")[0]) {
-        await (await fetch(`http://127.0.0.1:5000/currentTime`)).json().then(
+        await (await fetch(`https://backend-1047148175119.us-central1.run.app/currentTime`)).json().then(
             (data) => {
                 window.localStorage.setItem("currentTime", data["Time"])
             }
@@ -712,7 +712,7 @@ async function updateCustomSeriesData() {
     let date = customDate.value
     let day = date.getDate()
     let month = date.getMonth() + 1
-    await (await fetch(`http://127.0.0.1:5000/day/${toggle.value}/dayOfMonth/${day}/month/${month}`)).json().then(
+    await (await fetch(`https://backend-1047148175119.us-central1.run.app/day/${toggle.value}/dayOfMonth/${day}/month/${month}`)).json().then(
         (data) => {
             customChartSeries.value[0]['data'] = Object.values(data['Washing Machines']['Predictions'])
             customChartSeries.value[1]['data'] = Object.values(data['Dryers']['Predictions'])

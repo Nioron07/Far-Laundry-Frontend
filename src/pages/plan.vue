@@ -115,7 +115,7 @@ export default {
       this.invalidDates = false;
       const increment = this.numFreq * this.frequency;
       console.log(this.startDate.toDateString())
-      await (await fetch(`http://127.0.0.1:5000/optimumTime/${this.toggle}/startDay/${this.startDate.getTime()}/endDay/${this.endDate.getTime()}/step/${increment}`)).json().then(
+      await (await fetch(`https://backend-1047148175119.us-central1.run.app/optimumTime/${this.toggle}/startDay/${this.startDate.getTime()}/endDay/${this.endDate.getTime()}/step/${increment}`)).json().then(
         (data) => {
           
           console.log(this.schedule)
