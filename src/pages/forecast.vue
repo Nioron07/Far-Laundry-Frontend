@@ -32,7 +32,7 @@
                         </div>
                         <div class="d-flex justify-center">
                             <v-btn color="lime-darken-4" elevation="15" rounded="pill" text="Get Forecast"
-                                class="dateSelect" @click="updateCustomSeriesData()"></v-btn>
+                                class="dateSelect" @click="updateCustomSeriesData()" :loading="loading"></v-btn>
                         </div>
                         <v-card-actions class="pa-3">
                             <v-spacer></v-spacer>
@@ -69,6 +69,7 @@ const dayWasherData = ref([])
 const dayDryerData = ref([])
 const customDate = ref()
 const chartKey = ref(0)
+const loading = ref(false)
 const dayChartSeries = ref([
     {
         name: 'Washers',
@@ -709,6 +710,8 @@ const customChartOptions = ref({
 })
 
 async function updateCustomSeriesData() {
+    
+    loading.value = true
     let date = customDate.value
     let day = date.getDate()
     let month = date.getMonth() + 1
@@ -724,7 +727,7 @@ async function updateCustomSeriesData() {
     )
     customChartOptions.value.title.text = `Forecast for ${customDate.value.toString().slice(0, 15)}`
     chartKey.value = chartKey.value + 1
-    this.loading = true
+    loading.value = false
     selectionMenu.value = false
 
 }
