@@ -127,9 +127,10 @@ export default {
     },
     ExportPlan() {
       const events = this.schedule.map((item) => {
-        const date = new Date(item.title);
+        console.log('1')
+        const date = new Date(item.time);
         let [hours, minutes] = [0, 0];
-
+        console.log('2')
         const timeMatch = item.bestTime.match(/(\d+):(\d+)\s*(AM|PM)?/i);
         if (timeMatch) {
           let rawHour = parseInt(timeMatch[1], 10);
@@ -171,6 +172,7 @@ export default {
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
       });
+
     }
   }
 }
