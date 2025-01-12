@@ -239,8 +239,19 @@ const dayChartOptions = ref({
 })
 
 async function updateDaySeriesData(hall) {
+    const currentData = {'hall wash': toggle.value == 0 ? 'dayWasherDataOg' : 'dayWasherDataTr',
+        'hall dry': toggle.value == 0 ? 'dayDryerDataOg' : 'dayDryerDataTr',
+        'currentWash': null,
+        'currentDry': null
+    }
     var currentDay = new Date().getDate().toString()
-    if (currentDay != window.localStorage.getItem("currentDay")) {
+    await (await fetch(`https://backend-1047148175119.us-central1.run.app/current/${toggle.value}`)).json().then(
+        (data) => {
+            currentData['currentWash'] = data['Washing Machines']
+            currentData['currentDry'] = data['Dryers']
+        }
+    )
+    if (currentDay != window.localStorage.getItem("currentDay") || currentData['currentWash'] != window.localStorage.getItem(currentData['hall wash']).split(',')[new Date().getHours()] || currentData['currentDry'] != window.localStorage.getItem(currentData['hall dry']).split(',')[new Date().getHours()]) {
         dayDryerData.value = []
         dayWasherData.value = []
         await (await fetch(`https://backend-1047148175119.us-central1.run.app/today/0`)).json().then(
@@ -476,8 +487,20 @@ function updateGraphs() {
 }
 const weekChartWidth = ref('100%')
 async function updateWeekSeriesData(hall) {
+    const currentData = {'hall wash': toggle.value == 0 ? 'dayWasherDataOg' : 'dayWasherDataTr',
+        'hall dry': toggle.value == 0 ? 'dayDryerDataOg' : 'dayDryerDataTr',
+        'currentWash': null,
+        'currentDry': null
+    }
     var currentDay = new Date().getDate().toString()
-    if (currentDay != window.localStorage.getItem("currentDay")) {
+    await (await fetch(`https://backend-1047148175119.us-central1.run.app/current/${toggle.value}`)).json().then(
+        (data) => {
+            currentData['currentWash'] = data['Washing Machines']
+            currentData['currentDry'] = data['Dryers']
+        }
+    )
+    var currentDay = new Date().getDate().toString()
+    if (currentDay != window.localStorage.getItem("currentDay") || currentData['currentWash'] != window.localStorage.getItem(currentData['hall wash']).split(',')[new Date().getHours()] || currentData['currentDry'] != window.localStorage.getItem(currentData['hall dry']).split(',')[new Date().getHours()]) {
         weekChartSeries.value[0]['data'] = []
         weekChartSeries.value[1]['data'] = []
         await (await fetch("https://backend-1047148175119.us-central1.run.app/week/0")).json().then(
