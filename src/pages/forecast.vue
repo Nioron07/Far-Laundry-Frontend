@@ -62,7 +62,7 @@
 </template>
 
 <script setup>
-
+localStorage.clear()
 const selectionMenu = ref(true)
 const toggle = ref(0)
 const dayWasherData = ref([])
@@ -70,6 +70,8 @@ const dayDryerData = ref([])
 const customDate = ref()
 const chartKey = ref(0)
 const loading = ref(false)
+
+
 const dayChartSeries = ref([
     {
         name: 'Washers',
@@ -239,77 +241,131 @@ const dayChartOptions = ref({
 })
 
 async function updateDaySeriesData(hall) {
-    const currentData = {'hall wash': toggle.value == 0 ? 'dayWasherDataOg' : 'dayWasherDataTr',
-        'hall dry': toggle.value == 0 ? 'dayDryerDataOg' : 'dayDryerDataTr',
-        'currentWash': null,
-        'currentDry': null
-    }
-    var currentDay = new Date().getDate().toString()
-    await (await fetch(`https://backend-1047148175119.us-central1.run.app/current/${toggle.value}`)).json().then(
-        (data) => {
-            currentData['currentWash'] = data['Washing Machines']
-            currentData['currentDry'] = data['Dryers']
-        }
-    )
-    if (currentDay != window.localStorage.getItem("currentDay") || currentData['currentWash'] != window.localStorage.getItem(currentData['hall wash']).split(',')[new Date().getHours()] || currentData['currentDry'] != window.localStorage.getItem(currentData['hall dry']).split(',')[new Date().getHours()]) {
-        dayDryerData.value = []
-        dayWasherData.value = []
-        await (await fetch(`https://backend-1047148175119.us-central1.run.app/today/0`)).json().then(
-            (data) => {
-                window.localStorage.setItem("dayWasherDataOg", Object.values(data['Washing Machines']['Predictions']).toString())
-                window.localStorage.setItem("dayDryerDataOg", Object.values(data['Dryers']['Predictions']).toString())
-                window.localStorage.setItem("dayWashHighOg", data['Washing Machines']["High"])
-                window.localStorage.setItem("dayWashLowOg", data['Washing Machines']["Low"])
-                window.localStorage.setItem("dayDryHighOg", data['Dryers']["High"])
-                window.localStorage.setItem("dayDryLowOg", data['Dryers']["Low"])
-            }
-        )
-        await (await fetch(`https://backend-1047148175119.us-central1.run.app/today/1`)).json().then(
-            (data) => {
-                window.localStorage.setItem("dayWasherDataTr", Object.values(data['Washing Machines']['Predictions']).toString())
-                window.localStorage.setItem("dayDryerDataTr", Object.values(data['Dryers']['Predictions']).toString())
-                window.localStorage.setItem("dayWashHighTr", data['Washing Machines']["High"])
-                window.localStorage.setItem("dayWashLowTr", data['Washing Machines']["Low"])
-                window.localStorage.setItem("dayDryHighTr", data['Dryers']["High"])
-                window.localStorage.setItem("dayDryLowTr", data['Dryers']["Low"])
-            }
-        )
-        await (await fetch(`https://backend-1047148175119.us-central1.run.app/currentTime`)).json().then(
-            (data) => {
-                window.localStorage.setItem("currentTime", data["Time"])
-            }
-        )
-    }
-    var currentHour = new Date().getHours().toString() % 12
-    if (currentHour == 0) {
-        currentHour = 12
-    }
-    if (currentHour != window.localStorage.getItem("currentTime").split(" ")[1].split(":")[0]) {
-        await (await fetch(`https://backend-1047148175119.us-central1.run.app/currentTime`)).json().then(
-            (data) => {
-                window.localStorage.setItem("currentTime", data["Time"])
-            }
-        )
-    }
-    dayChartOptions.value["annotations"].xaxis[0].x = window.localStorage.getItem("currentTime").split(" ")[1]
+    const BASE_URL = 'https://backend-1047148175119.us-central1.run.app';
 
-    if (hall == 0) {
-        dayChartSeries.value[0]['data'] = window.localStorage.getItem("dayWasherDataOg").split(",")
-        dayChartSeries.value[1]['data'] = window.localStorage.getItem("dayDryerDataOg").split(",")
-        dayChartOptions.value["annotations"].xaxis[1].x = window.localStorage.getItem("dayWashHighOg")
-        dayChartOptions.value["annotations"].xaxis[2].x = window.localStorage.getItem("dayWashLowOg")
-        dayChartOptions.value["annotations"].xaxis[3].x = window.localStorage.getItem("dayDryHighOg")
-        dayChartOptions.value["annotations"].xaxis[4].x = window.localStorage.getItem("dayDryLowOg")
+    // Identify which localStorage keys to read based on `toggle.value`.
+    const washerKey = toggle.value === 0 ? 'dayWasherDataOg' : 'dayWasherDataTr';
+    const dryerKey = toggle.value === 0 ? 'dayDryerDataOg' : 'dayDryerDataTr';
+
+    // 1. Fetch current usage data (for “right now”).
+    const currentRes = await fetch(`${BASE_URL}/current/${toggle.value}`);
+    const currentJson = await currentRes.json();
+    const currentWash = currentJson['Washing Machines'];
+    const currentDry = currentJson['Dryers'];
+
+    // 2. Set up checks for new day or outdated data.
+    const todayString = new Date().getDate().toString();   // e.g. "11"
+    const storedDay = window.localStorage.getItem('currentDay');
+    const currentHourIdx = new Date().getHours();
+
+    // Pull existing data from localStorage (for whichever “hall” is in use).
+    const storedWasherData = window.localStorage.getItem(washerKey)?.split(',') || [];
+    const storedDryerData = window.localStorage.getItem(dryerKey)?.split(',') || [];
+
+    // Decide if data must be re-fetched.
+    const isNewDay = todayString !== storedDay;
+    const isWashOutdated = currentWash != null && currentWash != storedWasherData[currentHourIdx];
+    const isDryOutdated = currentDry != null && currentDry != storedDryerData[currentHourIdx];
+
+    // Additionally, check if Og/Tr data is missing altogether for both "0" and "1".
+    const missingDayWasherOg = !window.localStorage.getItem('dayWasherDataOg');
+    const missingDayDryerOg = !window.localStorage.getItem('dayDryerDataOg');
+    const missingDayWasherTr = !window.localStorage.getItem('dayWasherDataTr');
+    const missingDayDryerTr = !window.localStorage.getItem('dayDryerDataTr');
+
+    const isDataMissing = (
+        missingDayWasherOg || missingDayDryerOg ||
+        missingDayWasherTr || missingDayDryerTr
+    );
+ console.log(isNewDay +'\n'+ isWashOutdated +'\n'+ isDryOutdated +'\n'+ isDataMissing)
+    // 3. If day is new, data is outdated, or localStorage is missing daily data, 
+    //    then fetch the day predictions (for both 0 and 1 toggles).
+    if (isNewDay || isWashOutdated || isDryOutdated || isDataMissing) {
+        // Clear reactive data.
+        dayDryerData.value = [];
+        dayWasherData.value = [];
+
+        // --- Fetch + store "Og" predictions ---
+        if (missingDayWasherOg || missingDayDryerOg || isNewDay || isWashOutdated || isDryOutdated) {
+            const todayOgRes = await fetch(`${BASE_URL}/today/0`);
+            const todayOgJson = await todayOgRes.json();
+
+            window.localStorage.setItem('dayWasherDataOg',
+                Object.values(todayOgJson['Washing Machines']['Predictions']).toString()
+            );
+            window.localStorage.setItem('dayDryerDataOg',
+                Object.values(todayOgJson['Dryers']['Predictions']).toString()
+            );
+            window.localStorage.setItem('dayWashHighOg', todayOgJson['Washing Machines']['High']);
+            window.localStorage.setItem('dayWashLowOg', todayOgJson['Washing Machines']['Low']);
+            window.localStorage.setItem('dayDryHighOg', todayOgJson['Dryers']['High']);
+            window.localStorage.setItem('dayDryLowOg', todayOgJson['Dryers']['Low']);
+        }
+
+        // --- Fetch + store "Tr" predictions ---
+        if (missingDayWasherTr || missingDayDryerTr || isNewDay || isWashOutdated || isDryOutdated) {
+            const todayTrRes = await fetch(`${BASE_URL}/today/1`);
+            const todayTrJson = await todayTrRes.json();
+
+            window.localStorage.setItem('dayWasherDataTr',
+                Object.values(todayTrJson['Washing Machines']['Predictions']).toString()
+            );
+            window.localStorage.setItem('dayDryerDataTr',
+                Object.values(todayTrJson['Dryers']['Predictions']).toString()
+            );
+            window.localStorage.setItem('dayWashHighTr', todayTrJson['Washing Machines']['High']);
+            window.localStorage.setItem('dayWashLowTr', todayTrJson['Washing Machines']['Low']);
+            window.localStorage.setItem('dayDryHighTr', todayTrJson['Dryers']['High']);
+            window.localStorage.setItem('dayDryLowTr', todayTrJson['Dryers']['Low']);
+        }
+
+        // Update "currentDay" in local storage since we've confirmed a new fetch
+        window.localStorage.setItem('currentDay', todayString);
+
+        // Also update the current time in localStorage
+        const timeRes = await fetch(`${BASE_URL}/currentTime`);
+        const timeJson = await timeRes.json();
+        window.localStorage.setItem('currentTime', timeJson['Time']);
+    }
+
+    // 4. Verify that the hour in localStorage time is still current.
+    let currentHour = new Date().getHours() % 12;
+    if (currentHour === 0) currentHour = 12;
+
+    const storedTime = window.localStorage.getItem('currentTime') || '';
+    const [, storedTimeHMS] = storedTime.split(' ') || []; // e.g. ["2025-01-11", "05:32:10"]
+    const storedHour = storedTimeHMS ? storedTimeHMS.split(':')[0] : null;
+
+    if (currentHour.toString() !== storedHour) {
+        const timeRes = await fetch(`${BASE_URL}/currentTime`);
+        const timeJson = await timeRes.json();
+        window.localStorage.setItem('currentTime', timeJson['Time']);
+    }
+
+    // 5. Update the chart annotation for the current time
+    const latestTime = (window.localStorage.getItem('currentTime') || '').split(' ')[1] || '';
+    dayChartOptions.value.annotations.xaxis[0].x = latestTime;
+
+    // 6. Populate chart data for whichever hall is in use
+    if (hall === 0) {
+        dayChartSeries.value[0].data = (window.localStorage.getItem('dayWasherDataOg') || '').split(',');
+        dayChartSeries.value[1].data = (window.localStorage.getItem('dayDryerDataOg') || '').split(',');
+
+        dayChartOptions.value.annotations.xaxis[1].x = window.localStorage.getItem('dayWashHighOg') || '';
+        dayChartOptions.value.annotations.xaxis[2].x = window.localStorage.getItem('dayWashLowOg') || '';
+        dayChartOptions.value.annotations.xaxis[3].x = window.localStorage.getItem('dayDryHighOg') || '';
+        dayChartOptions.value.annotations.xaxis[4].x = window.localStorage.getItem('dayDryLowOg') || '';
     } else {
-        dayChartSeries.value[0]['data'] = window.localStorage.getItem("dayWasherDataTr").split(",")
-        dayChartSeries.value[1]['data'] = window.localStorage.getItem("dayDryerDataTr").split(",")
-        dayChartOptions.value["annotations"].xaxis[1].x = window.localStorage.getItem("dayWashHighTr")
-        dayChartOptions.value["annotations"].xaxis[2].x = window.localStorage.getItem("dayWashLowTr")
-        dayChartOptions.value["annotations"].xaxis[3].x = window.localStorage.getItem("dayDryHighTr")
-        dayChartOptions.value["annotations"].xaxis[4].x = window.localStorage.getItem("dayDryLowTr")
+        dayChartSeries.value[0].data = (window.localStorage.getItem('dayWasherDataTr') || '').split(',');
+        dayChartSeries.value[1].data = (window.localStorage.getItem('dayDryerDataTr') || '').split(',');
+
+        dayChartOptions.value.annotations.xaxis[1].x = window.localStorage.getItem('dayWashHighTr') || '';
+        dayChartOptions.value.annotations.xaxis[2].x = window.localStorage.getItem('dayWashLowTr') || '';
+        dayChartOptions.value.annotations.xaxis[3].x = window.localStorage.getItem('dayDryHighTr') || '';
+        dayChartOptions.value.annotations.xaxis[4].x = window.localStorage.getItem('dayDryLowTr') || '';
     }
 }
-updateDaySeriesData(toggle.value)
+
 
 const weekChartSeries = ref([
     {
@@ -487,82 +543,131 @@ function updateGraphs() {
 }
 const weekChartWidth = ref('100%')
 async function updateWeekSeriesData(hall) {
-    const currentData = {'hall wash': toggle.value == 0 ? 'dayWasherDataOg' : 'dayWasherDataTr',
-        'hall dry': toggle.value == 0 ? 'dayDryerDataOg' : 'dayDryerDataTr',
-        'currentWash': null,
-        'currentDry': null
-    }
-    var currentDay = new Date().getDate().toString()
-    await (await fetch(`https://backend-1047148175119.us-central1.run.app/current/${toggle.value}`)).json().then(
-        (data) => {
-            currentData['currentWash'] = data['Washing Machines']
-            currentData['currentDry'] = data['Dryers']
+    const BASE_URL = 'https://backend-1047148175119.us-central1.run.app';
+
+    const washerKey = toggle.value === 0 ? 'dayWasherDataOg' : 'dayWasherDataTr';
+    const dryerKey = toggle.value === 0 ? 'dayDryerDataOg' : 'dayDryerDataTr';
+
+    const currentRes = await fetch(`${BASE_URL}/current/${toggle.value}`);
+    const currentJson = await currentRes.json();
+    const currentWash = currentJson['Washing Machines'];
+    const currentDry = currentJson['Dryers'];
+
+    const localWasherDataStr = window.localStorage.getItem(washerKey);
+    const localDryerDataStr = window.localStorage.getItem(dryerKey);
+
+    const storedWasherData = localWasherDataStr ? localWasherDataStr.split(',') : [];
+    const storedDryerData = localDryerDataStr ? localDryerDataStr.split(',') : [];
+
+    const currentHour = new Date().getHours();
+    const storedWashForHour = storedWasherData[currentHour];
+    const storedDryForHour = storedDryerData[currentHour];
+
+    const isWashOutdated = (currentWash == null || currentWash != storedWashForHour);
+    const isDryOutdated = (currentDry == null || currentDry != storedDryForHour);
+
+    const missingOgData =
+        !window.localStorage.getItem('weekWasherDataOg') ||
+        !window.localStorage.getItem('weekDryerDataOg') ||
+        !window.localStorage.getItem('weekWashHighOg') ||
+        !window.localStorage.getItem('weekWashLowOg') ||
+        !window.localStorage.getItem('weekDryHighOg') ||
+        !window.localStorage.getItem('weekDryLowOg') ||
+        !window.localStorage.getItem('weekChartLabels');
+
+    const missingTrData =
+        !window.localStorage.getItem('weekWasherDataTr') ||
+        !window.localStorage.getItem('weekDryerDataTr') ||
+        !window.localStorage.getItem('weekWashHighTr') ||
+        !window.localStorage.getItem('weekWashLowTr') ||
+        !window.localStorage.getItem('weekDryHighTr') ||
+        !window.localStorage.getItem('weekDryLowTr');
+
+    const isWeekDataMissing = (missingOgData || missingTrData);
+
+    if (isWeekDataMissing || isWashOutdated || isDryOutdated) {
+        weekChartSeries.value[0].data = [];
+        weekChartSeries.value[1].data = [];
+        if (missingOgData || isWashOutdated || isDryOutdated) {
+            const weekOgRes = await fetch(`${BASE_URL}/week/0`);
+            const weekOgJson = await weekOgRes.json();
+
+            const weekOgWasherArr = Object.values(weekOgJson['Washing Machines']).slice(0, -2);
+            const weekOgDryerArr = Object.values(weekOgJson['Dryers']).slice(0, -2);
+            const weekChartLabelsArr = Object.keys(weekOgJson['Dryers']).slice(0, -2);
+
+            window.localStorage.setItem('currentTime', weekOgJson['Current Time']);
+            window.localStorage.setItem('weekWasherDataOg', weekOgWasherArr.toString());
+            window.localStorage.setItem('weekDryerDataOg', weekOgDryerArr.toString());
+            window.localStorage.setItem('weekChartLabels', weekChartLabelsArr.toString());
+            window.localStorage.setItem('weekWashHighOg', weekOgJson['Washing Machines'].High);
+            window.localStorage.setItem('weekWashLowOg', weekOgJson['Washing Machines'].Low);
+            window.localStorage.setItem('weekDryHighOg', weekOgJson['Dryers'].High);
+            window.localStorage.setItem('weekDryLowOg', weekOgJson['Dryers'].Low);
         }
-    )
-    var currentDay = new Date().getDate().toString()
-    if (currentDay != window.localStorage.getItem("currentDay") || currentData['currentWash'] != window.localStorage.getItem(currentData['hall wash']).split(',')[new Date().getHours()] || currentData['currentDry'] != window.localStorage.getItem(currentData['hall dry']).split(',')[new Date().getHours()]) {
-        weekChartSeries.value[0]['data'] = []
-        weekChartSeries.value[1]['data'] = []
-        await (await fetch("https://backend-1047148175119.us-central1.run.app/week/0")).json().then(
-            (data) => {
-                window.localStorage.setItem("currentDay", new Date().getDate().toString())
-                window.localStorage.setItem("currentTime", data['Current Time'])
-                window.localStorage.setItem("weekWasherDataOg", Object.values(data['Washing Machines']).slice(0, Object.values(data['Washing Machines']).length - 2).toString())
-                window.localStorage.setItem("weekDryerDataOg", Object.values(data['Dryers']).slice(0, Object.values(data['Washing Machines']).length - 2).toString())
-                window.localStorage.setItem("weekChartLabels", Object.keys(data['Dryers']).slice(0, Object.values(data['Washing Machines']).length - 2).toString())
-                window.localStorage.setItem("weekWashHighOg", data['Washing Machines']["High"])
-                window.localStorage.setItem("weekWashLowOg", data['Washing Machines']["Low"])
-                window.localStorage.setItem("weekDryHighOg", data['Dryers']["High"])
-                window.localStorage.setItem("weekDryLowOg", data['Dryers']["Low"])
-            }
-        )
-        await (await fetch("https://backend-1047148175119.us-central1.run.app/week/1")).json().then(
-            (data) => {
-                window.localStorage.setItem("weekWasherDataTr", Object.values(data['Washing Machines']).slice(0, Object.values(data['Washing Machines']).length - 2).toString())
-                window.localStorage.setItem("weekDryerDataTr", Object.values(data['Dryers']).slice(0, Object.values(data['Washing Machines']).length - 2).toString())
-                window.localStorage.setItem("weekWashHighTr", data['Washing Machines']["High"])
-                window.localStorage.setItem("weekWashLowTr", data['Washing Machines']["Low"])
-                window.localStorage.setItem("weekDryHighTr", data['Dryers']["High"])
-                window.localStorage.setItem("weekDryLowTr", data['Dryers']["Low"])
-            }
-        )
-        await (await fetch(`https://backend-1047148175119.us-central1.run.app/currentTime`)).json().then(
-            (data) => {
-                window.localStorage.setItem("currentTime", data["Time"])
-            }
-        )
-        weekChartWidth.value = '101%'
+
+        if (missingTrData || isWashOutdated || isDryOutdated) {
+            const weekTrRes = await fetch(`${BASE_URL}/week/1`);
+            const weekTrJson = await weekTrRes.json();
+
+            const weekTrWasherArr = Object.values(weekTrJson['Washing Machines']).slice(0, -2);
+            const weekTrDryerArr = Object.values(weekTrJson['Dryers']).slice(0, -2);
+
+            window.localStorage.setItem('weekWasherDataTr', weekTrWasherArr.toString());
+            window.localStorage.setItem('weekDryerDataTr', weekTrDryerArr.toString());
+            window.localStorage.setItem('weekWashHighTr', weekTrJson['Washing Machines'].High);
+            window.localStorage.setItem('weekWashLowTr', weekTrJson['Washing Machines'].Low);
+            window.localStorage.setItem('weekDryHighTr', weekTrJson['Dryers'].High);
+            window.localStorage.setItem('weekDryLowTr', weekTrJson['Dryers'].Low);
+        }
+
+        const timeRes = await fetch(`${BASE_URL}/currentTime`);
+        const timeJson = await timeRes.json();
+        window.localStorage.setItem('currentTime', timeJson['Time']);
+
+        weekChartWidth.value = '101%';
     }
-    var currentHour = new Date().getHours().toString() % 12
-    if (currentHour == 0) {
-        currentHour = 12
+
+    {
+        const timeFromStorage = window.localStorage.getItem('currentTime') || '';
+        const [, storedTimeHMS] = timeFromStorage.split(' ');
+        const storedHour = storedTimeHMS ? storedTimeHMS.split(':')[0] : '';
+
+        let nowHour = new Date().getHours() % 12;
+        if (nowHour === 0) nowHour = 12;
+
+        if (nowHour.toString() !== storedHour) {
+            const timeRes = await fetch(`${BASE_URL}/currentTime`);
+            const timeJson = await timeRes.json();
+            window.localStorage.setItem('currentTime', timeJson['Time']);
+        }
     }
-    if (currentHour != window.localStorage.getItem("currentTime").split(" ")[1].split(":")[0]) {
-        await (await fetch(`https://backend-1047148175119.us-central1.run.app/currentTime`)).json().then(
-            (data) => {
-                window.localStorage.setItem("currentTime", data["Time"])
-            }
-        )
-    }
-    weekChartOptions.value["annotations"].xaxis[0].x = window.localStorage.getItem("currentTime")
-    weekChartOptions.value['xaxis'].categories = window.localStorage.getItem("weekChartLabels").split(",")
-    if (hall == 0) {
-        weekChartSeries.value[0]['data'] = window.localStorage.getItem("weekWasherDataOg").split(",")
-        weekChartSeries.value[1]['data'] = window.localStorage.getItem("weekDryerDataOg").split(",")
-        weekChartOptions.value["annotations"].xaxis[1].x = window.localStorage.getItem("weekWashHighOg")
-        weekChartOptions.value["annotations"].xaxis[2].x = window.localStorage.getItem("weekWashLowOg")
-        weekChartOptions.value["annotations"].xaxis[3].x = window.localStorage.getItem("weekDryHighOg")
-        weekChartOptions.value["annotations"].xaxis[4].x = window.localStorage.getItem("weekDryLowOg")
+
+    weekChartOptions.value.annotations.xaxis[0].x = window.localStorage.getItem('currentTime') || '';
+
+    const weekLabelsStr = window.localStorage.getItem('weekChartLabels') || '';
+    weekChartOptions.value.xaxis.categories = weekLabelsStr.split(',');
+    console.log(weekChartOptions.value.xaxis.categories)
+
+    if (hall === 0) {
+        weekChartSeries.value[0].data = (window.localStorage.getItem('weekWasherDataOg') || '').split(',');
+        weekChartSeries.value[1].data = (window.localStorage.getItem('weekDryerDataOg') || '').split(',');
+
+        weekChartOptions.value.annotations.xaxis[1].x = window.localStorage.getItem('weekWashHighOg') || '';
+        weekChartOptions.value.annotations.xaxis[2].x = window.localStorage.getItem('weekWashLowOg') || '';
+        weekChartOptions.value.annotations.xaxis[3].x = window.localStorage.getItem('weekDryHighOg') || '';
+        weekChartOptions.value.annotations.xaxis[4].x = window.localStorage.getItem('weekDryLowOg') || '';
     } else {
-        weekChartSeries.value[0]['data'] = window.localStorage.getItem("weekWasherDataTr").split(",")
-        weekChartSeries.value[1]['data'] = window.localStorage.getItem("weekDryerDataTr").split(",")
-        weekChartOptions.value["annotations"].xaxis[1].x = window.localStorage.getItem("weekWashHighTr")
-        weekChartOptions.value["annotations"].xaxis[2].x = window.localStorage.getItem("weekWashLowTr")
-        weekChartOptions.value["annotations"].xaxis[3].x = window.localStorage.getItem("weekDryHighTr")
-        weekChartOptions.value["annotations"].xaxis[4].x = window.localStorage.getItem("weekDryLowTr")
+        weekChartSeries.value[0].data = (window.localStorage.getItem('weekWasherDataTr') || '').split(',');
+        weekChartSeries.value[1].data = (window.localStorage.getItem('weekDryerDataTr') || '').split(',');
+
+        weekChartOptions.value.annotations.xaxis[1].x = window.localStorage.getItem('weekWashHighTr') || '';
+        weekChartOptions.value.annotations.xaxis[2].x = window.localStorage.getItem('weekWashLowTr') || '';
+        weekChartOptions.value.annotations.xaxis[3].x = window.localStorage.getItem('weekDryHighTr') || '';
+        weekChartOptions.value.annotations.xaxis[4].x = window.localStorage.getItem('weekDryLowTr') || '';
     }
 }
-updateWeekSeriesData(toggle.value)
+updateGraphs()
 
 const customChartSeries = ref([
     {
@@ -733,7 +838,7 @@ const customChartOptions = ref({
 })
 
 async function updateCustomSeriesData() {
-    
+
     loading.value = true
     let date = customDate.value
     let day = date.getDate()
