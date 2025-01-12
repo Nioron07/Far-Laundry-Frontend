@@ -57,8 +57,9 @@
   </v-card>
   <v-alert v-if="invalidDates" class="alert" text="Start date must be before end date" type="error"
     variant="outlined"></v-alert>
+  <v-card style="width: 100%; overflow-x: scroll; justify-self: center;" color="transparent" v-show="schedule.length != 0">
   <v-timeline direction="horizontal" lineInset="15" truncate-line="both" dot-color="deep-purple-accent-3" fill-dot
-    class="timeline" v-show="schedule.length != 0">
+    class="timeline">
     <v-timeline-item v-for="(date, i) in schedule" size="x-small">
       <v-card :class="i % 2 != 0 ? 'evenDate' : 'oddDate'">
         <v-card-title class=" bg-deep-purple-accent-3">{{ date.time.slice(4, 16)}}</v-card-title>
@@ -68,6 +69,7 @@
       </v-card>
     </v-timeline-item>
   </v-timeline>
+  </v-card>
   <div class="d-flex justify-center ma-5" v-if="schedule.length != 0">
     <v-btn @click="ExportPlan" color="deep-purple-darken-3">Export Plan
       to Calendar</v-btn>
@@ -107,11 +109,11 @@ export default {
         return;
       }
       this.schedule = [];
-      this.loading = true;
       if (this.startDate > this.endDate) {
         this.invalidDates = true;
         return;
       }
+      this.loading = true;
       this.invalidDates = false;
       const increment = this.numFreq * this.frequency;
       console.log(this.startDate.toDateString())
@@ -232,18 +234,20 @@ export default {
   from {
     scale: 0%;
     bottom: 100px;
+    opacity: 0%;
   }
 
   to {
     scale: 100%;
     bottom: 0px;
+    opacity: 100%;
   }
 }
 
 .evenDate {
   scale: 100%;
   animation-name: evenDateAnim;
-  animation-duration: 0.5s;
+  animation-duration: 1s;
   animation-timing-function: ease-out;
 }
 
@@ -269,8 +273,7 @@ export default {
 }
 
 .timeline {
-  margin-top: 3vh;
-  margin-bottom: 3vh;
+  margin: 2vh;
 }
 
 .numInput {
