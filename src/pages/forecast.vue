@@ -10,9 +10,9 @@
         </v-btn-toggle>
     </div>
     <apexchart class="day-chart" type="area" :series="dayChartSeries" :options="dayChartOptions" width="100%"
-        height="36%" />
+        height="235vh" />
     <apexchart class="week-chart" type="area" :series="weekChartSeries" :options="weekChartOptions"
-        :width="weekChartWidth" height="36%" />
+        :width="weekChartWidth" height="235vh" />
     <div class="d-flex justify-center ma-10">
 
         <v-dialog max-width="1000" persistent>
@@ -67,7 +67,7 @@ const selectionMenu = ref(true)
 const toggle = ref(0)
 const dayWasherData = ref([])
 const dayDryerData = ref([])
-const customDate = ref()
+const customDate = ref(new Date())
 const chartKey = ref(0)
 const loading = ref(false)
 
@@ -862,6 +862,12 @@ async function updateCustomSeriesData() {
 </script>
 
 <style scoped>
+@media only screen and (max-width: 800px) {
+.toggle-div {
+    margin-top: 3% !important;
+    margin-bottom: 3%;
+}
+}
 .toggle-div {
     margin-top: 1.5%;
     display: flex;
@@ -869,7 +875,7 @@ async function updateCustomSeriesData() {
 }
 
 .dateSelect {
-    width: 20%;
+    width: fit-content;
     margin-top: 0.5vh;
     margin-bottom: 0.5vh;
 }

@@ -16,7 +16,7 @@
     </div>
     <v-card class="prediction-card" variant="outlined" color="cyan-accent-2">
         <v-card-title class="prediction-card-title">Current Prediction: {{ hall }}</v-card-title>
-        <div class="d-flex justify-space-evenly">
+        <div class="numDiv justify-space-evenly">
             <div class="card">
                 <h1 class="pred-header">Number of Washers:</h1>
                 <v-skeleton-loader v-if="loading" type="article" :loading="loading"></v-skeleton-loader>
@@ -61,6 +61,32 @@ getPrediction()
 </script>
 
 <style scoped>
+@media only screen and (max-width: 800px) and (min-width: 450px) {
+  .prediction-card {
+    width: 90% !important;
+    margin-top: 5% !important;
+  }
+}
+
+@media only screen and (max-width: 450px) {
+  .prediction-card {
+    width: 90% !important;
+    margin-top: 5% !important;
+  }
+.numDiv {
+    display: inline !important;
+}
+.card {
+    margin-left: 5%;
+    margin-right: 5%;
+}
+.prediction-card-title {
+    font-size: 23px !important;
+}
+}
+.numDiv {
+    display: flex;
+}
 .prediction-card {
     width: 60%;
     justify-self: center;

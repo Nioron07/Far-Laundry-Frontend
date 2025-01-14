@@ -14,7 +14,7 @@
       <v-btn @click="router.push('/')">
         <v-icon>mdi-washing-machine</v-icon>
 
-        Current Prediction
+        Current
       </v-btn>
 
       <v-btn @click="router.push('/forecast')">

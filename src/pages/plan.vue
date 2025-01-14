@@ -2,7 +2,7 @@
   <v-card variant="outlined" color="deep-purple-accent-2" class="bigCard pa-1 ma-3" rounded="xl">
     <v-card-title class="title">Laundry Planner</v-card-title>
     <v-form @submit.prevent fast-fail>
-      <div class="d-flex justify-space-evenly align-start">
+      <div class="inputDiv justify-space-evenly align-start">
         <div class="dateDiv">
           <h3 class="freqHeader">Dates</h3>
           <v-divider class="ma-2"></v-divider>
@@ -22,8 +22,9 @@
               variant="outlined" v-model="numFreq" :min=1>
             </v-number-input>
           </div>
+          <div class="d-flex justify-center align-center">
           <v-btn-toggle v-model="frequency" variant="outlined" shaped mandatory color="deep-purple-accent-2"
-            class="toggle">
+            class="toggle" density="comfortable">
             <v-btn :value="1">
               Day(s)
             </v-btn>
@@ -34,6 +35,7 @@
               Month(s)
             </v-btn>
           </v-btn-toggle>
+          </div>
         </div>
         <div>
           <h3 class="freqHeader">Hall</h3>
@@ -181,6 +183,30 @@ export default {
 </script>
 
 <style scoped>
+
+@media only screen and (max-width: 1000px) {
+.dateDiv {
+  width: 30% !important;
+}
+}
+
+@media only screen and (max-width: 800px) {
+  
+.dateDiv {
+  width: 90% !important;
+  justify-self: center !important;
+}
+.inputDiv {
+  display: block !important;
+}
+.freqDiv {
+  width: 60% !important;
+}
+.toggle-div {
+  margin-top: 5% !important;
+  margin-bottom: 7% !important;
+}
+}
 .title {
   font-family: Oxanium, sans-serif;
   font-size: 30px;
@@ -206,10 +232,6 @@ export default {
   font-family: Oxanium, sans-serif;
 }
 
-.selects {
-  max-width: 30%;
-}
-
 .freqDiv {
   justify-self: center;
   width: 70%;
@@ -221,7 +243,6 @@ export default {
 }
 
 .toggle {
-  width: fit-content;
   margin-bottom: 4%;
 }
 
@@ -281,6 +302,11 @@ export default {
 }
 
 .dateDiv {
-  width: 15%;
+  width: 20%;
+  margin-bottom: 2%;
+}
+
+.inputDiv {
+  display: flex;
 }
 </style>

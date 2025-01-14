@@ -61,6 +61,12 @@ function PostToDatabase() {
 }
 </script>
 <style scoped>
+@media only screen and (max-width: 800px) {
+  .form-card {
+    width: 90% !important;
+    margin-top: 5% !important;
+  }
+}
 .form-card {
   justify-self: center;
   width: 50%;
@@ -75,7 +81,7 @@ function PostToDatabase() {
 
 .form-title {
   font-family: Oxanium, sans-serif;
-  font-size: 30px;
+  font-size: 25px;
   justify-self: center;
 }
 
