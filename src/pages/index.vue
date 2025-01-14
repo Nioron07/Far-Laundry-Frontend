@@ -13,9 +13,11 @@ import { RouterLink } from 'vue-router';
     <v-card-subtitle class="page-subtitle">Created by Matthew Hirstius</v-card-subtitle>
   </v-card>
   <PredictionMenu />
-  <v-card variant="outlined" color="cyan-accent-2" class="d-flex justify-space-evenly align-center pa-2" style="width: fit-content; margin-left: 30lh; margin-top: 15vh;" rounded="pill">
-      <v-card-text>Prediction incorrect? Try contributing!</v-card-text>
-      <v-icon>mdi-arrow-down</v-icon>
+  <v-card variant="outlined" color="cyan-accent-2" class="d-flex justify-center align-center pa-2 ma-5" style="width: fit-content; justify-self: center;" rounded="pill">
+      <v-card-text>
+        Prediction incorrect? Try
+        <a href="/contribute">contributing!</a>
+      </v-card-text>
   </v-card>
 </template>
 
