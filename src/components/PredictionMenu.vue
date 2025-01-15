@@ -81,7 +81,10 @@ getPrediction()
     margin-right: 5%;
 }
 .prediction-card-title {
-    font-size: 23px !important;
+    font-size: 20px !important;
+}
+.pred-number {
+    font-size: 50px !important;
 }
 }
 .numDiv {
@@ -116,6 +119,7 @@ getPrediction()
     padding-bottom: 0px;
 }
 .pred-header {
+    display: flex;
     font-size: 20px;
     justify-self: center;
 }
