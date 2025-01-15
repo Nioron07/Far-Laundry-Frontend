@@ -12,8 +12,8 @@ import { RouterLink } from 'vue-router';
     <v-card-title class="page-title">FAR Laundry Tool</v-card-title>
     <v-card-subtitle class="page-subtitle">Created by Matthew Hirstius</v-card-subtitle>
   </v-card>
-  <PredictionMenu class="pred-menu"/>
-  <v-card variant="outlined" color="cyan-accent-2" class="CMA pa-2 ma-5" style="width: fit-content; justify-self: center;" rounded="pill">
+  <PredictionMenu />
+  <v-card variant="outlined" color="cyan-accent-2" class="d-flex justify-center align-center pa-2 ma-5" style="width: fit-content; justify-self: center;" rounded="pill">
       <v-card-text>
         Prediction incorrect? Try
         <a href="/contribute">contributing!</a>
@@ -32,10 +32,6 @@ import { RouterLink } from 'vue-router';
     font-size: 30px !important;
   }
 }
-.pred-menu {
-  display: flex;
-  justify-self: center;
-}
 .page-title {
   font-family: Oxanium, sans-serif;
   font-size: 75px;
@@ -49,10 +45,5 @@ import { RouterLink } from 'vue-router';
 .title-card {
   display: grid;
   justify-content: center;
-}
-.CMA {
-  display: flex;
-  justify-self: center;
-  align-self: center;
 }
 </style>
