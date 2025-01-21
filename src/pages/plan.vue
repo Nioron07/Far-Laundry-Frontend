@@ -302,7 +302,7 @@ export default {
 }
 
 .dateDiv {
-  width: 20%;
+  width: 18%;
   margin-bottom: 2%;
 }
 

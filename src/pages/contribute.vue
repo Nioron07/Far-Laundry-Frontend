@@ -41,7 +41,7 @@ function PostToDatabase() {
     fetch("https://backend-1047148175119.us-central1.run.app/contribute", {
       method: "POST",
       body: JSON.stringify({
-        data: [washerNum.value, dryerNum.value, halls[hall.value], today.getMonth(), today.getDay(), today.getHours()]
+        data: [washerNum.value, dryerNum.value, halls[hall.value]]
       }),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
