@@ -8,7 +8,9 @@
       :items="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]" variant="outlined"></v-select>
     <v-select :rules="rules" v-model="dryerNum" clearable class="form-input" label="Number of Dryers Available"
       :items="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]" variant="outlined"></v-select>
-    <v-btn color="light-green-darken-3" class="form-button" @click="PostToDatabase">Submit</v-btn>
+      <div class="pa-3">
+        <v-btn color="light-green-darken-3" block @click="PostToDatabase">Submit</v-btn>
+      </div>
   </v-card>
   </div>
   <div class="alert-div">
@@ -79,21 +81,15 @@ function PostToDatabase() {
 
 .form-input {
   margin-top: 3%;
-  width: 80%;
-  justify-self: center;
+  margin-left: 3%;
+  margin-right: 3%;
 }
 
 .form-title {
   font-family: Oxanium, sans-serif;
   font-size: 25px;
-  justify-self: center;
-}
-
-.form-button {
-  margin-top: 2%;
-  margin-bottom: 2%;
-  display: flex;
-  justify-self: center;
+  display: grid;
+  justify-content: center;
 }
 
 .alert-div {
