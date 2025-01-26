@@ -94,7 +94,7 @@ const dayChartOptions = ref({
         }
     },
     forecastDataPoints: {
-        count: 24 - new Date().getHours()
+        count: 23 - new Date().getHours()
     },
     dataLabels: {
         enabled: false
