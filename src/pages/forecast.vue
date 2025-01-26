@@ -107,6 +107,7 @@ const dayChartOptions = ref({
         toolbar: {
             offsetX: -30,
             tools: {
+                pan: false,
                 download: false
             }
         },
@@ -431,6 +432,7 @@ const weekChartOptions = ref({
         toolbar: {
             offsetX: -30,
             tools: {
+                pan: false,
                 download: false
             }
         }
