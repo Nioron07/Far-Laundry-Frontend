@@ -110,10 +110,7 @@ const dayChartOptions = ref({
                 download: false
             }
         },
-        background: 'transparent',
-        zoom: {
-            enabled: false
-        }
+        background: 'transparent'
     },
     title: {
         text: 'Full Day Forecast',
