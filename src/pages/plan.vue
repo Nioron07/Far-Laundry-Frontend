@@ -4,15 +4,17 @@
     <v-card-title class="title">Laundry Planner</v-card-title>
     <v-form @submit.prevent fast-fail>
       <div class="inputDiv justify-space-evenly align-start">
-        <div class="dateDiv">
+        <div>
           <h3 class="freqHeader">Dates</h3>
           <v-divider class="ma-2"></v-divider>
-          <v-date-input clearable variant="outlined" label="Start Date" v-model="startDate" :rules="startDateRules"
+        <div class="dateDiv">
+          <v-date-input clearable variant="outlined" label="Start Date" style="width: 10lh;" v-model="startDate" :rules="startDateRules"
             show-adjacent-months>
           </v-date-input>
-          <v-date-input clearable variant="outlined" label="End Date" v-model="endDate" :rules="endDateRules"
+          <v-date-input clearable variant="outlined" label="End Date" style="width: 10lh;" v-model="endDate" :rules="endDateRules"
             show-adjacent-months>
           </v-date-input>
+        </div>
         </div>
         <div>
           <h3 class="freqHeader">Frequency</h3>
@@ -194,17 +196,9 @@ export default {
   font-size: 10px !important;
 
 }
-  .dateDiv {
-    width: 30% !important;
-  }
 }
 
-@media only screen and (max-width: 800px) {
-
-  .dateDiv {
-    width: 90% !important;
-    justify-self: center !important;
-  }
+@media only screen and (max-width: 850px) {
 
   .inputDiv {
     display: block !important;
@@ -315,8 +309,9 @@ export default {
 }
 
 .dateDiv {
-  width: 18%;
   margin-bottom: 2%;
+  display: grid;
+  justify-content: center;
 }
 
 .inputDiv {
