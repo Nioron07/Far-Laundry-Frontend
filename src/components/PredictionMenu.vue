@@ -70,14 +70,16 @@ getPrediction()
 <style scoped>
 @media only screen and (max-width: 800px) and (min-width: 450px) {
     .prediction-card {
-        width: 90% !important;
+        margin-left: 7% !important;
+        margin-right: 7% !important;
         margin-top: 5% !important;
     }
 }
 
 @media only screen and (max-width: 450px) {
     .prediction-card {
-        width: 90% !important;
+        margin-left: 3% !important;
+        margin-right: 3% !important;
         margin-top: 5% !important;
     }
 
@@ -104,21 +106,17 @@ getPrediction()
 }
 
 .prediction-card {
-    display: grid;
-    width: 60%;
-    justify-self: center;
+    margin-left: 20%;
+    margin-right: 20%;
+    justify-content: center;
     margin-top: 1%;
 }
 
 .prediction-card-title {
-    justify-self: center;
+    justify-content: center;
     display: grid;
     font-size: 30px;
     font-family: Oxanium, sans-serif;
-}
-
-.hall-dropdown {
-    justify-content: center;
 }
 
 .hall-selector {
@@ -130,10 +128,6 @@ getPrediction()
     margin-top: 2%;
 }
 
-.hall-button-list {
-    justify-self: center;
-}
-
 .pred-number {
     font-size: 75px;
     font-family: Oxanium, sans-serif;
@@ -141,12 +135,14 @@ getPrediction()
 }
 
 .pred-header {
-    justify-self: center;
+    display: grid;
+    justify-content: center;
 }
 
 .pred-card {
     display: flex;
     justify-content: center;
+    margin-bottom: 5vh;
 }
 
 .card {

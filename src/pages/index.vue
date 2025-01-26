@@ -12,9 +12,7 @@ import { RouterLink } from 'vue-router';
     <v-card-title class="page-title">FAR Laundry Tool</v-card-title>
     <v-card-subtitle class="page-subtitle">Created by Matthew Hirstius</v-card-subtitle>
   </v-card>
-  <div style="display: grid; justify-content: center;">
-    <PredictionMenu />
-  </div>
+  <PredictionMenu />
   <div style="display: grid; justify-content: center;">
   <v-card variant="outlined" color="cyan-accent-2" class="d-flex justify-center align-center pa-2 ma-5" style="width: fit-content;" rounded="pill">
       <v-card-text>
