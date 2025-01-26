@@ -391,6 +391,9 @@ const weekChartOptions = ref({
             fontFamily: 'Oxanium'
         }
     },
+    forecastDataPoints: {
+        count: 168 - new Date().getHours()
+    },
     dataLabels: {
         enabled: false
     },
