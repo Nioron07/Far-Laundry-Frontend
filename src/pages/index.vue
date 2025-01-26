@@ -15,7 +15,7 @@ import { RouterLink } from 'vue-router';
   <PredictionMenu />
   <v-card variant="outlined" color="cyan-accent-2" class="d-flex justify-center align-center pa-2 ma-5" style="width: fit-content; justify-self: center;" rounded="pill">
       <v-card-text>
-        Prediction incorrect? Try
+        Numbers incorrect? Try
         <a href="/contribute">contributing!</a>
       </v-card-text>
   </v-card>
