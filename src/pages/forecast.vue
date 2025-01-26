@@ -93,6 +93,9 @@ const dayChartOptions = ref({
             fontFamily: 'Oxanium'
         }
     },
+    forecastDataPoints: {
+        count: 24 - new Date().getHours()
+    },
     dataLabels: {
         enabled: false
     },
@@ -277,7 +280,7 @@ async function updateDaySeriesData(hall) {
         missingDayWasherOg || missingDayDryerOg ||
         missingDayWasherTr || missingDayDryerTr
     );
- console.log(isNewDay +'\n'+ isWashOutdated +'\n'+ isDryOutdated +'\n'+ isDataMissing)
+    console.log(isNewDay + '\n' + isWashOutdated + '\n' + isDryOutdated + '\n' + isDataMissing)
     // 3. If day is new, data is outdated, or localStorage is missing daily data, 
     //    then fetch the day predictions (for both 0 and 1 toggles).
     if (isNewDay || isWashOutdated || isDryOutdated || isDataMissing) {
@@ -863,11 +866,12 @@ async function updateCustomSeriesData() {
 
 <style scoped>
 @media only screen and (max-width: 800px) {
-.toggle-div {
-    margin-top: 3% !important;
-    margin-bottom: 3%;
+    .toggle-div {
+        margin-top: 3% !important;
+        margin-bottom: 3%;
+    }
 }
-}
+
 .toggle-div {
     margin-top: 1.5%;
     display: flex;
