@@ -392,7 +392,7 @@ const weekChartOptions = ref({
         }
     },
     forecastDataPoints: {
-        count: 168 - new Date().getHours()
+        count: 167 - new Date().getHours()
     },
     dataLabels: {
         enabled: false
