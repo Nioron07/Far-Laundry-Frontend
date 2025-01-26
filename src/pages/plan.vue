@@ -1,5 +1,6 @@
 <template>
-  <v-card variant="outlined" color="deep-purple-accent-2" class="bigCard pa-1 ma-3" rounded="xl">
+  <div class="bigCard pa-1 ma-4">
+    <v-card variant="outlined" color="deep-purple-accent-2" rounded="xl">
     <v-card-title class="title">Laundry Planner</v-card-title>
     <v-form @submit.prevent fast-fail>
       <div class="inputDiv justify-space-evenly align-start">
@@ -23,18 +24,18 @@
             </v-number-input>
           </div>
           <div class="d-flex justify-center align-center">
-          <v-btn-toggle v-model="frequency" variant="outlined" shaped mandatory color="deep-purple-accent-2"
-            class="toggle" density="comfortable">
-            <v-btn :value="1">
-              Day(s)
-            </v-btn>
-            <v-btn :value="7">
-              Week(s)
-            </v-btn>
-            <v-btn :value="30">
-              Month(s)
-            </v-btn>
-          </v-btn-toggle>
+            <v-btn-toggle v-model="frequency" variant="outlined" shaped mandatory color="deep-purple-accent-2"
+              class="toggle" density="comfortable">
+              <v-btn :value="1">
+                Day(s)
+              </v-btn>
+              <v-btn :value="7">
+                Week(s)
+              </v-btn>
+              <v-btn :value="30">
+                Month(s)
+              </v-btn>
+            </v-btn-toggle>
           </div>
         </div>
         <div>
@@ -57,20 +58,22 @@
       </div>
     </v-form>
   </v-card>
+  </div>
   <v-alert v-if="invalidDates" class="alert" text="Start date must be before end date" type="error"
     variant="outlined"></v-alert>
-  <v-card style="width: 100%; overflow-x: scroll; justify-self: center;" color="transparent" v-show="schedule.length != 0">
-  <v-timeline direction="horizontal" lineInset="15" truncate-line="both" dot-color="deep-purple-accent-3" fill-dot
-    class="timeline">
-    <v-timeline-item v-for="(date, i) in schedule" size="x-small">
-      <v-card :class="i % 2 != 0 ? 'evenDate' : 'oddDate'">
-        <v-card-title class=" bg-deep-purple-accent-3">{{ date.time.slice(4, 16)}}</v-card-title>
-        <v-card-text class="pa-2">
-          <p>{{ `Best Time:\n ${date.bestTime}` }}</p>
-        </v-card-text>
-      </v-card>
-    </v-timeline-item>
-  </v-timeline>
+  <v-card style="width: 100%; overflow-x: scroll; justify-self: center;" color="transparent"
+    v-show="schedule.length != 0">
+    <v-timeline direction="horizontal" lineInset="15" truncate-line="both" dot-color="deep-purple-accent-3" fill-dot
+      class="timeline">
+      <v-timeline-item v-for="(date, i) in schedule" size="x-small">
+        <v-card :class="i % 2 != 0 ? 'evenDate' : 'oddDate'">
+          <v-card-title class=" bg-deep-purple-accent-3">{{ date.time.slice(4, 16) }}</v-card-title>
+          <v-card-text class="pa-2">
+            <p>{{ `Best Time:\n ${date.bestTime}` }}</p>
+          </v-card-text>
+        </v-card>
+      </v-timeline-item>
+    </v-timeline>
   </v-card>
   <div class="d-flex justify-center ma-5" v-if="schedule.length != 0">
     <v-btn @click="ExportPlan" color="deep-purple-darken-3">Export Plan
@@ -121,7 +124,7 @@ export default {
       console.log(this.startDate.toDateString())
       await (await fetch(`https://backend-1047148175119.us-central1.run.app/optimumTime/${this.toggle}/startDay/${this.startDate.getTime()}/endDay/${this.endDate.getTime()}/step/${increment}`)).json().then(
         (data) => {
-          
+
           console.log(this.schedule)
           this.schedule = data['Optimum Time']
           console.log(this.schedule)
@@ -183,58 +186,68 @@ export default {
 </script>
 
 <style scoped>
-
 @media only screen and (max-width: 1000px) {
-.dateDiv {
-  width: 30% !important;
+  .title {
+  font-size: 15px !important;
 }
+.freqHeader {
+  font-size: 10px !important;
+
+}
+  .dateDiv {
+    width: 30% !important;
+  }
 }
 
 @media only screen and (max-width: 800px) {
-  
-.dateDiv {
-  width: 90% !important;
-  justify-self: center !important;
+
+  .dateDiv {
+    width: 90% !important;
+    justify-self: center !important;
+  }
+
+  .inputDiv {
+    display: block !important;
+  }
+
+  .freqDiv {
+    margin-left: 5% !important;
+    margin-right: 5% !important;
+  }
+
+  .toggle-div {
+    margin-top: 5% !important;
+    margin-bottom: 7% !important;
+  }
 }
-.inputDiv {
-  display: block !important;
-}
-.freqDiv {
-  width: 60% !important;
-}
-.toggle-div {
-  margin-top: 5% !important;
-  margin-bottom: 7% !important;
-}
-}
+
 .title {
   font-family: Oxanium, sans-serif;
   font-size: 30px;
-  justify-self: center;
-}
-
-.bigCard {
-  width: 98%;
-  justify-self: center;
+  display: grid;
+  justify-content: center;
 }
 
 .submitButtonDiv {
-  justify-self: center;
+  display: grid;
+  justify-content: center;
   margin-bottom: 1vh;
 }
 
 .toggle-div {
-  justify-self: center;
+  display: grid;
+  justify-content: center;
 }
 
 .freqHeader {
-  justify-self: center;
+  display: grid;
+  justify-content: center;
   font-family: Oxanium, sans-serif;
 }
 
 .freqDiv {
-  justify-self: center;
-  width: 70%;
+  margin-left: 2%;
+  margin-right: 2%;
 }
 
 .txt {

@@ -18,7 +18,7 @@
             <div class="numDiv justify-space-evenly">
                 <div class="card">
                     <div class="pred-header">
-                        <h1 style="font-size: 20px;">Number of Washers:</h1>
+                        <h1 style="font-size: 15px;">Number of Washers:</h1>
                     </div>
                     <v-skeleton-loader v-if="loading" type="article" :loading="loading"></v-skeleton-loader>
                     <v-card v-if="!loading" variant="outlined" class="pred-card">
@@ -27,7 +27,7 @@
                 </div>
                 <div class="card">
                     <div class="pred-header">
-                        <h1 style="font-size: 20px;">Number of Dryers:</h1>
+                        <h1 style="font-size: 15px;">Number of Dryers:</h1>
                     </div>
                     <v-skeleton-loader v-if="loading" type="article" :loading="loading"></v-skeleton-loader>
                     <v-card v-if="!loading" variant="outlined" class="pred-card">
@@ -108,7 +108,6 @@ getPrediction()
 .prediction-card {
     margin-left: 20%;
     margin-right: 20%;
-    justify-content: center;
     margin-top: 1%;
 }
 

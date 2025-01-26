@@ -1,5 +1,6 @@
 <template>
-  <v-card class="form-card" color="light-green-accent-2" variant="outlined">
+  <div class="form-card" >
+  <v-card color="light-green-accent-2" variant="outlined">
     <v-card-text class="form-title">Laundry Data Entry Form</v-card-text>
     <v-select :rules="rules" v-model="hall" clearable class="form-input" label="Select Hall"
       :items="['Oglesby', 'Trelease']" variant="outlined"></v-select>
@@ -9,12 +10,15 @@
       :items="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]" variant="outlined"></v-select>
     <v-btn color="light-green-darken-3" class="form-button" @click="PostToDatabase">Submit</v-btn>
   </v-card>
+  </div>
+  <div class="alert-div">
   <v-alert closable v-if="success == 'success'" class="alert" title="Success!" text="Thank you for contributing!"
     type="success" variant="tonal"></v-alert>
   <v-alert closable v-if="success == 'duplicate'" class="alert" title="Error" text="Duplicate Submission" type="error"
     variant="tonal"></v-alert>
   <v-alert closable v-if="success == 'failed'" class="alert" title="Error" text="Something went wrong with your request"
     type="error" variant="tonal"></v-alert>
+  </div>
 </template>
 <script>
 export default {
@@ -37,7 +41,6 @@ const dryerNum = ref()
 const halls = { 'Oglesby': 0, 'Trelease': 1 }
 function PostToDatabase() {
   if (hall.value != null && washerNum.value != null && dryerNum.value != null) {
-    var today = new Date()
     fetch("https://backend-1047148175119.us-central1.run.app/contribute", {
       method: "POST",
       body: JSON.stringify({
@@ -63,13 +66,14 @@ function PostToDatabase() {
 <style scoped>
 @media only screen and (max-width: 800px) {
   .form-card {
-    width: 90% !important;
+    margin-left: 5% !important;
+    margin-right: 5% !important;
     margin-top: 5% !important;
   }
 }
 .form-card {
-  justify-self: center;
-  width: 50%;
+  margin-left: 20%;
+  margin-right: 20%;
   margin-top: 2%;
 }
 
@@ -92,10 +96,10 @@ function PostToDatabase() {
   justify-self: center;
 }
 
-.alert {
+.alert-div {
   font-family: Oxanium, sans-serif;
-  width: 40%;
-  justify-self: center;
-  margin-top: 2%;
+  display: grid;
+  justify-content: center;
+  margin-top: 5%;
 }
 </style>
